@@ -31,7 +31,7 @@
       <option>墨田区</option>
     </select>
 
-    <input type="text" id="name" placeholder="店舗名（例: 練馬ラーメン太郎）">
+    <input type="text" id="name" placeholder="店舗名（例: 練馬ラーメン太郎）" value="テスト店舗">
 
     <input type="text" id="url" placeholder="店舗URL" value="https://skabra.co.jp/">
 
@@ -49,9 +49,10 @@
 
   <script>
     function generate() {
-      const name = document.getElementById('name').value || 'テスト店舗';
+      let name = document.getElementById('name').value.trim();
+      if (!name) name = 'テスト店舗';  // 強制デフォルト
       const file = name.replace(/[^a-zA-Z0-9]/g, '_') + '_balloon.html';
-      const pageURL = `https://nougaki.github.io/sukabura/${file}`;  // 確定: /sukabura/ あり
+      const pageURL = `https://nougaki.github.io/sukabura/${file}`;  // /sukabura/ 固定
 
       document.getElementById('pageURL').href = pageURL;
       document.getElementById('pageURL').textContent = pageURL;
