@@ -1,74 +1,75 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>テスト店舗 空中アドバルーン</title>
-  <!-- A-Frame (AR対応) -->
-  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  <!-- AR.js (マーカー不要の位置情報AR) -->
-  <script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script>
+  <title>@nougaki 空中アドバルーン生成</title>
   <style>
-    body { margin: 0; overflow: hidden; font-family: sans-serif; }
-    .info {
-      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-      background: rgba(0,0,0,0.7); color: white; padding: 10px 20px; border-radius: 10px;
-      font-size: 16px; text-align: center; z-index: 100;
-    }
+    body { font-family: sans-serif; padding: 20px; background: #e6f7ff; text-align: center; }
+    .box { background: white; padding: 20px; margin: 15px auto; max-width: 500px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    input, select, button { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+    button { background: #d40000; color: white; font-weight: bold; border: none; cursor: pointer; }
+    button:hover { background: #b30000; }
+    #result { display: none; }
+    #qrImg { width: 180px; margin: 15px auto; display: block; }
   </style>
 </head>
 <body>
-  <!-- ARシーン -->
-  <a-scene
-    embedded
-    arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false;"
-    renderer="logarithmicDepthBuffer: true;"
-    vr-mode-ui="enabled: false"
-  >
-    <!-- 風船（空中に浮遊） -->
-    <a-entity position="0 3 -3" animation="property: position; to: 0 3.5 -3; dur: 2000; dir: alternate; loop: true;">
-      <a-sphere radius="1" color="#ff69b4" opacity="0.9">
-        <!-- 店舗名テキスト -->
-        <a-text
-          value="テスト店舗"
-          color="white"
-          align="center"
-          width="8"
-          position="0 0 0.6"
-          rotation="0 0 0"
-        ></a-text>
-      </a-sphere>
-    </a-entity>
+  <div class="box">
+    <h1>@nougaki 空中アドバルーン生成</h1>
+    <p><strong>β版テスト中</strong></p>
 
-    <!-- 紐（風船と重りを繋ぐ） -->
-    <a-entity line="start: 0 3 -3; end: 0 1.5 -3; color: #333333; opacity: 0.8"></a-entity>
+    <select id="city">
+      <option>豊島区</option>
+      <option selected>練馬区</option>
+      <option>新宿区</option>
+      <option>港区</option>
+      <option>三鷹市</option>
+      <option>杉並区</option>
+      <option>西東京市</option>
+      <option>千代田区</option>
+      <option>台東区</option>
+      <option>中央区</option>
+      <option>中野区</option>
+      <option>調布市</option>
+      <option>東久留米市</option>
+      <option>墨田区</option>
+    </select>
 
-    <!-- 重り（地面に固定） -->
-    <a-entity position="0 1.5 -3">
-      <a-cone
-        radius-bottom="0.5"
-        radius-top="0.1"
-        height="1"
-        color="#FFD700"
-        metalness="0.3"
-        roughness="0.7"
-      ></a-cone>
-      <a-cylinder
-        position="0 -0.6 0"
-        radius="0.3"
-        height="0.2"
-        color="#8B4513"
-      ></a-cylinder>
-    </a-entity>
+    <input type="text" id="name" placeholder="店舗名（例: 練馬ラーメン太郎）" value="テスト店舗">
 
-    <!-- カメラ -->
-    <a-camera></a-camera>
-  </a-scene>
+    <input type="text" id="url" placeholder="店舗URL" value="https://skabra.co.jp/">
 
-  <!-- 案内メッセージ -->
-  <div class="info">
-    <p><strong>空中アドバルーン出現中！</strong><br>
-    スマホを動かして風船を探索してください</p>
+    <input type="text" id="address" placeholder="住所" value="東京都練馬区">
+
+    <button onclick="generate()">生成する！</button>
   </div>
+
+  <div id="result" class="box">
+    <h3>生成完了！</h3>
+    <p><strong>公開URL：</strong><br><a id="pageURL" target="_blank" style="color: blue; text-decoration: none;"></a></p>
+    <img id="qrImg" src="" alt="QRコード">
+    <p><button onclick="sendMail()">店舗にメール送信</button></p>
+  </div>
+
+  <script>
+    function generate() {
+      let name = document.getElementById('name').value.trim();
+      if (!name || name.length === 0) name = 'テスト店舗';  // 空なら強制デフォルト
+      const safeName = name.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20) || 'test';  // 空なら 'test', 長さ制限
+      const file = safeName + '_balloon.html';
+      const pageURL = `https://nougaki.github.io/sukabura/${file}`;  // /sukabura/ 固定
+
+      document.getElementById('pageURL').href = pageURL;
+      document.getElementById('pageURL').textContent = pageURL;
+      document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${encodeURIComponent(pageURL)}`;
+      document.getElementById('result').style.display = 'block';
+
+      alert(`生成完了！\nURL: ${pageURL}\nQRスキャンで空中アドバルーン！`);
+    }
+
+    function sendMail() {
+      const url = document.getElementById('pageURL').href;
+      window.location.href = `mailto:aer-skabra@skabra.co.jp?subject=空中アドバルーン設置完了&body=公開URL: ${url}%0D%0AQR: 添付%0D%0Aβ版テスト中です！`;
+    }
+  </script>
 </body>
 </html>
