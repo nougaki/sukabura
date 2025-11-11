@@ -60,21 +60,15 @@
       const url = document.getElementById('url').value.trim() || 'https://skabra.co.jp/';
       const address = document.getElementById('address').value.trim() || '東京都練馬区';
       
-      // ファイル名生成（空回避）
       let safeName = name.replace(/[^a-zA-Z0-9]/g, '_');
       if (!safeName || safeName.length === 0) safeName = 'test';
       safeName = safeName.substring(0, 20);
       const file = safeName + '_balloon.html';
       const pageURL = `https://nougaki.github.io/sukabura/${file}`;
 
-      // URL表示
       document.getElementById('pageURL').href = pageURL;
       document.getElementById('pageURL').textContent = pageURL;
-      
-      // QR生成
       document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${encodeURIComponent(pageURL)}`;
-      
-      // 結果表示
       document.getElementById('result').style.display = 'block';
 
       alert(`生成完了！\n自治体: ${city}\n店舗: ${name}\nURL: ${pageURL}\nQRスキャンで空中アドバルーン！`);
