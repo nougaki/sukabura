@@ -4,45 +4,84 @@
   <meta charset="UTF-8">
   <title>@nougaki 空中アドバルーン生成</title>
   <style>
-    body {font-family:sans-serif;padding:20px;background:#e6f7ff;text-align:center;}
-    .box {background:white;padding:20px;margin:auto;max-width:500px;border-radius:12px;}
-    input,select,button {padding:12px;margin:8px 0;width:100%;border-radius:8px;}
-    button {background:#d40000;color:white;font-weight:bold;}
-    #result {display:none;}
-    #qrImg {width:180px;margin:15px auto;}
+    body { font-family: sans-serif; padding: 20px; background: #e6f7ff; text-align: center; margin: 0; }
+    .box { background: white; padding: 20px; margin: 15px auto; max-width: 500px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    input, select, button { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+    button { background: #d40000; color: white; font-weight: bold; border: none; cursor: pointer; }
+    button:hover { background: #b30000; }
+    #result { display: none; }
+    #qrImg { width: 180px; margin: 15px auto; display: block; }
+    a { color: blue; text-decoration: none; }
   </style>
 </head>
 <body>
   <div class="box">
     <h1>@nougaki 空中アドバルーン生成</h1>
     <p><strong>β版テスト中</strong></p>
-    <select id="city"><option selected>練馬区</option></select>
-    <input id="name" placeholder="店舗名" value="テスト店舗">
-    <input id="url" placeholder="店舗URL" value="https://skabra.co.jp/">
-    <input id="address" placeholder="住所" value="東京都練馬区">
+
+    <select id="city">
+      <option value="練馬区" selected>練馬区</option>
+      <option value="豊島区">豊島区</option>
+      <option value="新宿区">新宿区</option>
+      <option value="港区">港区</option>
+      <option value="三鷹市">三鷹市</option>
+      <option value="杉並区">杉並区</option>
+      <option value="西東京市">西東京市</option>
+      <option value="千代田区">千代田区</option>
+      <option value="台東区">台東区</option>
+      <option value="中央区">中央区</option>
+      <option value="中野区">中野区</option>
+      <option value="調布市">調布市</option>
+      <option value="東久留米市">東久留米市</option>
+      <option value="墨田区">墨田区</option>
+    </select>
+
+    <input type="text" id="name" placeholder="店舗名（例: 練馬ラーメン太郎）" value="テスト店舗">
+
+    <input type="text" id="url" placeholder="店舗URL" value="https://skabra.co.jp/">
+
+    <input type="text" id="address" placeholder="住所" value="東京都練馬区">
+
     <button onclick="generate()">生成する！</button>
   </div>
 
   <div id="result" class="box">
     <h3>生成完了！</h3>
-    <p>公開URL：<a id="pageURL" target="_blank"></a></p>
-    <img id="qrImg">
-    <p><button onclick="sendMail()">メール送信</button></p>
+    <p><strong>公開URL：</strong><br><a id="pageURL" target="_blank"></a></p>
+    <img id="qrImg" src="" alt="QRコード">
+    <p><button onclick="sendMail()">店舗にメール送信</button></p>
   </div>
 
   <script>
     function generate() {
-      let name = document.getElementById('name').value.trim();
-      if (!name) name = 'テスト店舗';  // 空なら強制
-      const file = name.replace(/[^a-zA-Z0-9]/g,'_') || 'test';  // 空なら 'test'
-      const url = 'https://nougaki.github.io/sukabura/' + file + '_balloon.html';
-      document.getElementById('pageURL').href = url;
-      document.getElementById('pageURL').textContent = url;
-      document.getElementById('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=' + encodeURIComponent(url);
+      const city = document.getElementById('city').value;
+      const name = document.getElementById('name').value.trim() || 'テスト店舗';
+      const url = document.getElementById('url').value.trim() || 'https://skabra.co.jp/';
+      const address = document.getElementById('address').value.trim() || '東京都練馬区';
+      
+      // ファイル名生成（空回避）
+      let safeName = name.replace(/[^a-zA-Z0-9]/g, '_');
+      if (!safeName || safeName.length === 0) safeName = 'test';
+      safeName = safeName.substring(0, 20);
+      const file = safeName + '_balloon.html';
+      const pageURL = `https://nougaki.github.io/sukabura/${file}`;
+
+      // URL表示
+      document.getElementById('pageURL').href = pageURL;
+      document.getElementById('pageURL').textContent = pageURL;
+      
+      // QR生成
+      document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${encodeURIComponent(pageURL)}`;
+      
+      // 結果表示
       document.getElementById('result').style.display = 'block';
+
+      alert(`生成完了！\n自治体: ${city}\n店舗: ${name}\nURL: ${pageURL}\nQRスキャンで空中アドバルーン！`);
     }
+
     function sendMail() {
-      window.location.href = 'mailto:aer-skabra@skabra.co.jp?subject=設置完了&body=URL: ' + document.getElementById('pageURL').href;
+      const url = document.getElementById('pageURL').href;
+      window.location.href = `mailto:aer-skabra@skabra.co.jp?subject=空中アドバルーン設置完了&body=自治体: ${document.getElementById('city').value}%0D%0A店舗: ${document.getElementById('name').value}%0D%0AURL: ${url}%0D%0AQR: 添付%0D%0Aβ版テスト中です！`;
     }
   </script>
 </body>
