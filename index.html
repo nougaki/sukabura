@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="GENERATOR" content="JustSystems Homepage Builder Version 21.0.5.0 for Windows">
   <title>@nougaki 空中アドバルーン生成</title>
   <style>
     body { font-family: sans-serif; padding: 20px; background: #e6f7ff; text-align: center; }
@@ -53,7 +51,7 @@
     function generate() {
       const name = document.getElementById('name').value || 'テスト店舗';
       const file = name.replace(/[^a-zA-Z0-9]/g, '_') + '_balloon.html';
-      const pageURL = `https://nougaki.github.io/${file}`;
+      const pageURL = `https://nougaki.github.io/sukabura/${file}`;  // 修正: /sukabura/ を追加
       document.getElementById('pageURL').href = pageURL;
       document.getElementById('pageURL').textContent = pageURL;
       document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${encodeURIComponent(pageURL)}`;
