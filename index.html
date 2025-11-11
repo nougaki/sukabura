@@ -51,7 +51,7 @@
     function generate() {
       const name = document.getElementById('name').value || 'テスト店舗';
       const file = name.replace(/[^a-zA-Z0-9]/g, '_') + '_balloon.html';
-      const pageURL = `https://nougaki.github.io/sukabura/${file}`;
+      const pageURL = `https://nougaki.github.io/sukabura/${file}`;  // 修正: /sukabura/ を追加
 
       document.getElementById('pageURL').href = pageURL;
       document.getElementById('pageURL').textContent = pageURL;
