@@ -17,9 +17,9 @@
     <h1>@nougaki 空中アドバルーン生成</h1>
     <p><strong>β版テスト中</strong></p>
     <select id="city"><option selected>練馬区</option></select>
-    <input id="name" value="テスト店舗">
-    <input id="url" value="https://skabra.co.jp/">
-    <input id="address" value="東京都練馬区">
+    <input id="name" placeholder="店舗名" value="テスト店舗">
+    <input id="url" placeholder="店舗URL" value="https://skabra.co.jp/">
+    <input id="address" placeholder="住所" value="東京都練馬区">
     <button onclick="generate()">生成する！</button>
   </div>
 
@@ -32,9 +32,10 @@
 
   <script>
     function generate() {
-      const name = document.getElementById('name').value.trim() || 'テスト店舗';
-      const file = name.replace(/[^a-zA-Z0-9]/g,'_') + '_balloon.html';
-      const url = 'https://nougaki.github.io/sukabura/' + file;
+      let name = document.getElementById('name').value.trim();
+      if (!name) name = 'テスト店舗';  // 空なら強制
+      const file = name.replace(/[^a-zA-Z0-9]/g,'_') || 'test';  // 空なら 'test'
+      const url = 'https://nougaki.github.io/sukabura/' + file + '_balloon.html';
       document.getElementById('pageURL').href = url;
       document.getElementById('pageURL').textContent = url;
       document.getElementById('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=' + encodeURIComponent(url);
